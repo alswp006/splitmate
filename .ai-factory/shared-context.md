@@ -42,6 +42,8 @@ export type RouteState =
     storage.ts
     types.ts
   pipeline/
+    heal.ts
+    json-guard.ts
   types.ts
 
 ### Exports (src/lib/)
@@ -52,3 +54,4 @@ CRITICAL: Before creating any new function, type, or component, check the list a
 ## Already Implemented (do NOT duplicate or overwrite)
 - heal-1-01: 엔티티 타입 + RouteState 계약 정의(최소 스켈레톤) (files: src/types.ts)
 - heal-1-02: localStorage 저장 계층 구현(F1 AC 충족) (files: src/lib/storage.ts)
+- heal-2-02: truncation 감지 및 안전 실패/재시도 가드 (files: src/pipeline/json-guard.ts, src/pipeline/heal.ts)

@@ -53,3 +53,47 @@ export function repairTruncatedJSON(fragment: string): unknown | null {
     return null;
   }
 }
+
+export interface ChunkParseError {
+  index: number;
+  message: string;
+}
+
+export interface ParseChunkedResponseResult {
+  chunks: unknown[];
+  errors: ChunkParseError[];
+}
+
+/**
+ * Parses a response made of newline-delimited JSON chunks, repairing
+ * truncated fragments per-line so a single bad chunk doesn't invalidate
+ * the rest (each chunk is parsed/validated independently, then callers
+ * merge the successful ones).
+ */
+export function parseChunkedResponse(content: string): ParseChunkedResponseResult {
+  const lines = content
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const chunks: unknown[] = [];
+  const errors: ChunkParseError[] = [];
+
+  lines.forEach((line, index) => {
+    try {
+      chunks.push(JSON.parse(line));
+      return;
+    } catch {
+      // fall through to repair
+    }
+
+    const repaired = repairTruncatedJSON(line);
+    if (repaired !== null) {
+      chunks.push(repaired);
+    } else {
+      errors.push({ index, message: "청크를 파싱/복구할 수 없습니다" });
+    }
+  });
+
+  return { chunks, errors };
+}
