@@ -41,6 +41,7 @@ export type RouteState =
   lib/
     storage.ts
     types.ts
+  pipeline/
   types.ts
 
 ### Exports (src/lib/)
