@@ -1,8 +1,3 @@
-# Shared Context (auto-generated — do NOT modify)
-
-
-## Shared Types Contract (IMPORT these, do NOT redefine)
-```typescript
 export interface Member {
   id: string;
   name: string;
@@ -33,5 +28,3 @@ export type RouteState =
   | { screen: "home" }
   | { screen: "create" }
   | { screen: "result"; sessionId: string };
-
-```
