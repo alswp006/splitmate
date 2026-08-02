@@ -35,3 +35,14 @@ export type RouteState =
   | { screen: "result"; sessionId: string };
 
 ```
+
+## Existing Codebase (import and use these — do NOT recreate)
+### File Tree (src/)
+  lib/
+    storage.ts
+    types.ts
+
+### Exports (src/lib/)
+- storage.ts: export type SaveResult =; export function getSessions(): SplitSession[]; export function getSession(id: string): SplitSession | null; export function saveSession(session: SplitSession): SaveResult
+- types.ts: export interface Member; export interface SplitItem; export interface SplitSession; export interface SettlementResult; export type RouteState = |
+CRITICAL: Before creating any new function, type, or component, check the list above. If something similar exists, import and use it.
