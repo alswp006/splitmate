@@ -1,24 +1,11 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { Toast } from "@toss/tds-mobile";
 import AdSlot from "@/components/AdSlot";
-
-interface PersonShare {
-  name: string;
-  amount: number;
-}
-
-interface ResultData {
-  totalAmount: number;
-  perPerson?: PersonShare[] | null;
-}
-
-interface ResultRouteState {
-  result?: ResultData | null;
-}
+import type { RouteState } from "@/lib/types";
 
 export default function Result() {
   const location = useLocation();
-  const state = location.state as ResultRouteState | null | undefined;
+  const state = location.state as RouteState | null | undefined;
 
   if (!state?.result) {
     Toast.show("계산 내역을 찾을 수 없어요. 처음부터 다시 시작해주세요");

@@ -30,6 +30,7 @@ export interface RouteState {
     types.ts
   pages/
     Result.tsx
+  types/
 
 ### Exports (src/lib/)
 - history.ts: export interface HistoryEntry; export function getHistoryList( entries: HistoryEntry[] | null | undefined ): HistoryEntry[]; export interface NightlyBatchResult; export function runNightlyBatch( entries: HistoryEntry[] | null | undefined ): NightlyBatchResult
@@ -45,3 +46,4 @@ CRITICAL: Before creating any new function, type, or component, check the list a
 
 ## Already Implemented (do NOT duplicate or overwrite)
 - heal-1-02: 배열 렌더 지점 옵셔널 체이닝·기본값 방어 (files: src/pages/Result.tsx, src/lib/history.ts)
+- heal-2-01: 누락 모듈 해상도 복구(의존성·경로·타입선언) (files: package.json, tsconfig.json, src/types/tds-mobile.d.ts, src/components/AdSlot.tsx)
