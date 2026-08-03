@@ -1,0 +1,28 @@
+{
+  "name": "splitmate",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.24.1",
+    "@toss/tds-mobile": "^2.5.1"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^15.0.6",
+    "@testing-library/jest-dom": "^6.4.2",
+    "@types/node": "^20.14.9",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "vitest": "^1.6.0",
+    "jsdom": "^24.1.0",
+    "typescript": "^5.5.2"
+  }
+}

@@ -7,14 +7,14 @@ import { getHistoryList, runNightlyBatch } from "@/lib/history";
 import type { HistoryEntry } from "@/lib/history";
 
 // --- react-router-dom: keep real Navigate/Routes/Route, mock only useNavigate ---
-const mockNavigate = vi.fn();
+const { mockNavigate } = vi.hoisted(() => ({ mockNavigate: vi.fn() }));
 vi.mock("react-router-dom", async () => ({
   ...(await vi.importActual("react-router-dom")),
   useNavigate: () => mockNavigate,
 }));
 
 // --- @/state/AppStateContext ---
-const mockSetInput = vi.fn();
+const { mockSetInput } = vi.hoisted(() => ({ mockSetInput: vi.fn() }));
 vi.mock("@/state/AppStateContext", () => ({
   useAppState: () => ({ setInput: mockSetInput, input: null, result: null }),
   AppStateProvider: (props: any) => props.children,
@@ -22,7 +22,7 @@ vi.mock("@/state/AppStateContext", () => ({
 
 // --- @toss/tds-mobile: crashes in jsdom, mock every export as a passthrough,
 // but keep Toast.show as an inspectable spy ---
-const mockToastShow = vi.fn();
+const { mockToastShow } = vi.hoisted(() => ({ mockToastShow: vi.fn() }));
 vi.mock("@toss/tds-mobile", () => {
   const passthrough = (props: any) =>
     React.createElement(React.Fragment, null, props?.children ?? null);
@@ -30,6 +30,7 @@ vi.mock("@toss/tds-mobile", () => {
   return new Proxy(known, {
     get(target: Record<string, unknown>, prop: string) {
       if (prop === "__esModule") return true;
+      if (prop === "then") return undefined;
       if (prop in target) return target[prop];
       return passthrough;
     },

@@ -9,7 +9,7 @@ interface PersonShare {
 
 interface ResultData {
   totalAmount: number;
-  perPerson: PersonShare[];
+  perPerson?: PersonShare[] | null;
 }
 
 interface ResultRouteState {
@@ -32,7 +32,7 @@ export default function Result() {
       <h1>정산 결과</h1>
       <p>총 {totalAmount.toLocaleString()}원</p>
       <ul>
-        {perPerson.map((person) => (
+        {(perPerson ?? []).map((person) => (
           <li key={person.name}>
             {person.name}: {person.amount.toLocaleString()}원
           </li>
