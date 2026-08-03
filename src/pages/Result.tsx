@@ -1,10 +1,11 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Toast } from "@toss/tds-mobile";
 import AdSlot from "@/components/AdSlot";
 import type { RouteState } from "@/lib/types";
 
 export default function Result() {
   const location = useLocation();
+  const navigate = useNavigate();
   const state = location.state as RouteState | null | undefined;
 
   if (!state?.result) {
@@ -25,6 +26,9 @@ export default function Result() {
           </li>
         ))}
       </ul>
+      <button onClick={() => navigate("/")} style={{ margin: "8px 0 16px" }}>
+        새로 계산하기
+      </button>
       <AdSlot />
     </div>
   );

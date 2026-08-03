@@ -1,12 +1,57 @@
 import { useState } from "react";
+import type { ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import type { PersonShare, ResultData } from "@/lib/types";
 
+const DRAFT_STORAGE_KEY = "splitmate:home-draft";
+
+interface Draft {
+  amount: string;
+  names: string;
+}
+
+function loadDraft(): Draft {
+  try {
+    const raw = sessionStorage.getItem(DRAFT_STORAGE_KEY);
+    if (!raw) return { amount: "", names: "" };
+    const parsed = JSON.parse(raw);
+    return {
+      amount: typeof parsed.amount === "string" ? parsed.amount : "",
+      names: typeof parsed.names === "string" ? parsed.names : "",
+    };
+  } catch {
+    return { amount: "", names: "" };
+  }
+}
+
+function saveDraft(draft: Draft) {
+  try {
+    sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+  } catch {
+    // 임시 저장 실패해도 계산 자체는 계속 진행
+  }
+}
+
 export default function Home() {
   const navigate = useNavigate();
-  const [amount, setAmount] = useState("");
-  const [names, setNames] = useState("");
+  const [amount, setAmount] = useState(() => loadDraft().amount);
+  const [names, setNames] = useState(() => loadDraft().names);
   const [error, setError] = useState("");
+
+  const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const digitsOnly = e.target.value.replace(/[^0-9]/g, "");
+    const next = digitsOnly ? Number(digitsOnly).toLocaleString() : "";
+    setAmount(next);
+    setError("");
+    saveDraft({ amount: next, names });
+  };
+
+  const handleNamesChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const next = e.target.value;
+    setNames(next);
+    setError("");
+    saveDraft({ amount, names: next });
+  };
 
   const handleSubmit = () => {
     const totalAmount = Number(amount.replace(/,/g, ""));
@@ -38,18 +83,24 @@ export default function Home() {
     <div style={{ padding: "16px" }}>
       <h1>더치페이 계산</h1>
       <div style={{ marginBottom: 12 }}>
+        <p style={{ margin: "0 0 4px", fontSize: 13, color: "#4e5968" }}>
+          총 금액
+        </p>
         <input
           placeholder="예: 96,000"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={handleAmountChange}
           inputMode="numeric"
         />
       </div>
       <div style={{ marginBottom: 12 }}>
+        <p style={{ margin: "0 0 4px", fontSize: 13, color: "#4e5968" }}>
+          정산할 사람 (쉼표로 구분)
+        </p>
         <input
           placeholder="예: 민지, 서준, 하은"
           value={names}
-          onChange={(e) => setNames(e.target.value)}
+          onChange={handleNamesChange}
         />
       </div>
       {error && <p style={{ color: "#e5484d" }}>{error}</p>}
