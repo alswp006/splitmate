@@ -158,11 +158,11 @@ import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
 
 ## Memory Index (자동 학습 — 힌트로만 사용, 실제 코드 확인 필수)
 
-Available topics: general(4), ui(2)
+Available topics: deploy(1), general(4), ui(2)
 
 Key lessons (verify against actual code before applying):
+- [deploy] 빌드 불안정 — 의존성 버전 고정, 빌드 전 typecheck 필수 (60%)
 - [ui] 라우팅·Provider·전역 네비게이션은 단일 최상위 파일이 배타적으로 소유하도록 하나의 통합 패킷으로 합치고, 페이지 패킷들은 이 소유자에만 의존하게 하여 상호 대기 교착을 없애라. (60%)
 - [general] 라우팅·Provider·전역 레이아웃 같은 단일 통합 배선 책임은 하나의 워크패킷에만 할당하고, 다른 패킷은 그 위에 페이지 내부 요소만 얹도록 경계를 명확히 나눠라. (60%)
 - [general] 여러 페이지 패킷을 병렬로 내보내기 전에, 라우팅·Provider·공유 UI 스캐폴드 계약을 하나의 앱셸 패킷에서 먼저 확정하고 빌드로 스모크 검증하라. (60%)
 - [ui] 온보딩·인증 같은 교차 관심사 리다이렉트는 라우터 최상위 가드 한 곳에서 처리하고, 화면·셸·Provider는 서로 강결합하지 말고 각각 이미 병합된 계약만 소비하도록 증분 통합하라. (60%)
-- [general] 화면·기능 패킷을 병렬 구현하기 전에 공유 계약(타입·컨텍스트 훅·공통 레이아웃 스캐폴드)의 export 시그니처를 먼저 고정하고, 라우터 배선은 미구현 경로를 플레이스홀더로 방어 연결해 단일 화면 결함이 전체 빌드를 무너뜨리지 않게 하라. (60%)
