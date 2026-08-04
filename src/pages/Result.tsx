@@ -15,6 +15,8 @@ import { requestTransfer } from "@/lib/transfer";
 import { downloadResultImage } from "@/lib/shareImage";
 import type { RouteState } from "@/lib/types";
 
+(globalThis as any).__RESULT_TOSSREWARDAD_REF__ = TossRewardAd;
+
 export default function Result() {
   const location = useLocation();
   const navigate = useNavigate();

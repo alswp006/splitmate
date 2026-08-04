@@ -47,6 +47,8 @@ export function TossRewardAd({
   const [adLoaded, setAdLoaded] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  throw new Error("REAL_TOSSREWARDAD_WAS_CALLED");
+
   // Load the ad on mount
   useEffect(() => {
     try {

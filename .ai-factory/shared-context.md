@@ -35,7 +35,7 @@ export type formatKrwFn = (amount: number) => string;
 
 export type formatDateFn = (date: string) => string;
 
-export type generateTossTransferUrlFn = (from: string; to: string; amountKrw: number) => string;
+export type generateTossTransferUrlFn = (from: string, to: string, amountKrw: number) => string;
 
 export type useHapticFn = () => () => void;
 
@@ -189,7 +189,7 @@ export interface RouteState {
 
 ### Exports (src/lib/)
 - calc.ts: export type SplitMode = "even" | "ratio" | "fixed" | "excluded"; export interface SplitParticipant; export interface Share; export interface SettlementResult; export type CalculateSplitResult = |; export interface CalculateSplitInput; export function calculateSplit( input: CalculateSplitInput ): CalculateSplitResult
-- contract.ts: export type Person =; export type Item =; export type Settlement =; export type SettlementResult =; export type RouteState =; export type saveSettlementFn = (settlement: Settlement) => void; export type getSettlementFn = (id: string) => Settlement | null; export type listSettlementsFn = () => Settlement[]
+- contract.ts: export type Participant =; export type Item =; export type TransferResult =; export type SplitResult =; export type RouteState =; export type saveSplitResultFn = (result: SplitResult) => Promise<void>; export type getSplitResultsFn = () => Promise<SplitResult[]>; export type deleteSplitResultFn = (id: string) => Promise<void>
 - format.ts: export function formatKRW(amount: number): string; export function parseKRW(formatted: string): number
 - shareImage.ts: export function downloadResultImage(title: string, rows: ShareRow[]): boolean
 - storage.ts: export function getItem<T>(key: string): T | null; export function setItem<T>(key: string, value: T): void; export function removeItem(key: string): void; export function saveSettlement(settlement: Settlement): SaveResult; export function getRecentSettlements(): Settlement[]; export function getSettlementById(id: string): Settlement | null; export function deleteSettlement(id: string):; export function getFlags(): Flags
@@ -234,3 +234,4 @@ CRITICAL: Before creating any new function, type, or component, check the list a
 - 0007: 항목 입력 `/new/items` (금액·인원 지정) (files: src/pages/Items.tsx)
 - 0008: 분할 설정 `/new/split` (계산 실행 + 저장) (files: src/pages/Split.tsx)
 - 0011: 햅틱·공유 헬퍼 컴포넌트 + 최종 UX 폴리시 (files: src/hooks/useHaptic.ts, src/components/ShareCard.tsx)
+- 0005: 홈 화면 `/` (최근 내역) (files: src/pages/Home.tsx)

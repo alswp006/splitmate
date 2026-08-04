@@ -1,8 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it } from "vitest";
 import React from "react";
 import { screen, fireEvent } from "@testing-library/react";
 import { mockTds, mockAppsInToss, mockRouter, mockLocation } from "@/__tests__/__helpers__/mocks";
 import { renderWithRouter } from "@/__tests__/__helpers__/test-utils";
+import { vi } from "vitest";
 
 mockTds();
 mockAppsInToss();
@@ -21,30 +22,16 @@ vi.mock("@/lib/storage", () => ({
 }));
 vi.mock("@/lib/transfer", () => ({ requestTransfer: vi.fn(async () => true) }));
 
-const tossRewardAdSlotIds: unknown[] = [];
-function trackerComponent(props: { slotId?: string; children: React.ReactNode }) {
-  tossRewardAdSlotIds.push(props.slotId);
-  return props.children;
-}
-vi.mock("@/components/TossRewardAd", () => {
-  return {
-    TossRewardAd: trackerComponent,
-  };
-});
-
 import Result from "@/pages/Result";
 
-describe("probe-granular", () => {
-  beforeEach(() => {
-    tossRewardAdSlotIds.length = 0;
-  });
-
-  it("renders TossRewardAd mock on share click", () => {
+describe("debug6-no-mock-tossrewardad", () => {
+  it("renders real TossRewardAd (no mock)", () => {
     mockLocation.state = { settlementId: "s1" };
     renderWithRouter(React.createElement(Result), { initialEntries: ["/result"] });
+    console.log("BEFORE CLICK ===================");
+    console.log(document.body.innerHTML.slice(0, 2000));
     fireEvent.click(screen.getByRole("button", { name: /정산 내역 공유/ }));
-    const ref = (globalThis as any).__RESULT_TOSSREWARDAD_REF__;
-    console.log("REF === trackerComponent?", ref === trackerComponent, "ref.name=", ref?.name);
-    expect(tossRewardAdSlotIds.length).toBeGreaterThanOrEqual(1);
+    console.log("AFTER CLICK ===================");
+    console.log(document.body.innerHTML.slice(0, 4000));
   });
 });
