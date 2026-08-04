@@ -295,8 +295,11 @@ describe("AC-4: RouteState defines 5 routes with correct payload types", () => {
         { participantId: "p2", mode: "even", value: 0 },
       ],
     };
-    expect(splitState.splitRules).toHaveLength(2);
-    expect(splitState.splitRules[0].mode).toBe("even");
+    expect(splitState.splitRules).toBeDefined();
+    if (splitState.splitRules) {
+      expect(splitState.splitRules).toHaveLength(2);
+      expect(splitState.splitRules[0].mode).toBe("even");
+    }
   });
 
   it("should have RouteState key for S5 settlement result (/result)", () => {
