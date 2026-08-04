@@ -228,3 +228,4 @@ CRITICAL: Before creating any new function, type, or component, check the list a
 - 0003: 분할 계산 순수 함수 (files: src/lib/calc.ts)
 - 0004: 통화 포맷 & 토스 송금 딥링크 유틸 (files: src/lib/format.ts, src/lib/transfer.ts)
 - 0011: 햅틱·공유 헬퍼 컴포넌트 + 최종 UX 폴리시 (files: src/hooks/useHaptic.ts, src/components/ShareCard.tsx)
+- 0006: 기본 정보 입력 `/new` (제목·참여자) (files: src/pages/NewSettlement.tsx)
