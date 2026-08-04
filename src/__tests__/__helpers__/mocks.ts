@@ -118,12 +118,14 @@ export function mockTds() {
       React.createElement("button", { onClick }, children),
 
     TextField: React.forwardRef(
-      ({ label, help, hasError, variant, ...props }: any, ref: any) =>
+      ({ label, help, hasError, variant, left, right, ...props }: any, ref: any) =>
         React.createElement(
           "div",
           null,
           React.createElement("label", null, label),
+          left,
           React.createElement("input", { ref, "data-variant": variant, ...props }),
+          right,
           hasError && help && React.createElement("span", { role: "alert" }, help),
         ),
     ),
@@ -161,10 +163,10 @@ export function mockTds() {
       { Header: ({ children }: any) => React.createElement("div", null, children) },
     ),
 
-    Chip: ({ children, selected, onClick }: any) =>
+    Chip: ({ children, selected, onClick, ...props }: any) =>
       React.createElement(
         "button",
-        { role: "button", "aria-pressed": selected, onClick },
+        { role: "button", "aria-pressed": selected, onClick, ...props },
         children,
       ),
 
