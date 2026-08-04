@@ -173,8 +173,11 @@ export interface RouteState {
     TossRewardAd.tsx
   hooks/
   lib/
+    calc.ts
     contract.ts
+    format.ts
     storage.ts
+    transfer.ts
     types.ts
     utils.ts
   main.tsx
@@ -188,8 +191,11 @@ export interface RouteState {
   vite-env.d.ts
 
 ### Exports (src/lib/)
+- calc.ts: export type SplitMode = "even" | "ratio" | "fixed" | "excluded"; export interface SplitParticipant; export interface Share; export interface SettlementResult; export type CalculateSplitResult = |; export interface CalculateSplitInput; export function calculateSplit( input: CalculateSplitInput ): CalculateSplitResult
 - contract.ts: export type Person =; export type Item =; export type Settlement =; export type SettlementResult =; export type RouteState =; export type saveSettlementFn = (settlement: Settlement) => void; export type getSettlementFn = (id: string) => Settlement | null; export type listSettlementsFn = () => Settlement[]
-- storage.ts: export function getItem<T>(key: string): T | null; export function setItem<T>(key: string, value: T): void; export function removeItem(key: string): void
+- format.ts: export function formatKRW(amount: number): string; export function parseKRW(formatted: string): number
+- storage.ts: export function getItem<T>(key: string): T | null; export function setItem<T>(key: string, value: T): void; export function removeItem(key: string): void; export function saveSettlement(settlement: Settlement): SaveResult; export function getRecentSettlements(): Settlement[]; export function getSettlementById(id: string): Settlement | null; export function deleteSettlement(id: string):; export function getFlags(): Flags
+- transfer.ts: export async function requestTransfer( amount: number, recipientName?: string ): Promise<boolean>
 - types.ts: export type SplitMode = 'even' | 'ratio' | 'fixed' | 'excluded'; export interface Participant; export interface SettlementItem; export interface SplitRule; export interface Settlement; export interface ParticipantShare; export interface SettlementResult; export type SaveResult = |
 - utils.ts: export function cn(...classes: (string | boolean | undefined | null)[]): string; export function formatNumber(n: number): string; export function formatCurrency(n: number, currency = 'KRW'): string
 
@@ -208,9 +214,13 @@ export interface RouteState {
 - SummaryHero.tsx: SummaryHero
 - TossPurchase.tsx: TossPurchase
 - TossRewardAd.tsx: TossRewardAd
+
+### Module Dependencies (import graph)
+  lib/storage.ts → imports: lib/types
 CRITICAL: Before creating any new function, type, or component, check the list above. If something similar exists, import and use it.
 
 ## Already Implemented (do NOT duplicate or overwrite)
 - 0001: 엔티티 타입 & RouteState 계약 정의 (files: src/lib/types.ts)
 - 0002: localStorage 저장 계층 (CRUD) (files: src/lib/storage.ts)
 - 0003: 분할 계산 순수 함수 (files: src/lib/calc.ts)
+- 0004: 통화 포맷 & 토스 송금 딥링크 유틸 (files: src/lib/format.ts, src/lib/transfer.ts)
