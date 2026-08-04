@@ -185,6 +185,8 @@ export interface RouteState {
   main.tsx
   pages/
     Home.tsx
+    Items.tsx
+    NewSettlement.tsx
     __TdsGallery.tsx
   styles/
     globals.css
@@ -220,6 +222,9 @@ export interface RouteState {
 
 ### Module Dependencies (import graph)
   lib/storage.ts → imports: lib/types
+  pages/Home.tsx → imports: components/ScreenScaffold, components/StateView, lib/format, lib/storage, lib/types
+  pages/Items.tsx → imports: components/ScreenScaffold, components/BottomCTA, components/SummaryHero, components/Amount, lib/format, lib/types
+  pages/NewSettlement.tsx → imports: components/ScreenScaffold, components/BottomCTA, lib/types
 CRITICAL: Before creating any new function, type, or component, check the list above. If something similar exists, import and use it.
 
 ## Already Implemented (do NOT duplicate or overwrite)
@@ -229,3 +234,4 @@ CRITICAL: Before creating any new function, type, or component, check the list a
 - 0004: 통화 포맷 & 토스 송금 딥링크 유틸 (files: src/lib/format.ts, src/lib/transfer.ts)
 - 0011: 햅틱·공유 헬퍼 컴포넌트 + 최종 UX 폴리시 (files: src/hooks/useHaptic.ts, src/components/ShareCard.tsx)
 - 0006: 기본 정보 입력 `/new` (제목·참여자) (files: src/pages/NewSettlement.tsx)
+- 0007: 항목 입력 `/new/items` (금액·인원 지정) (files: src/pages/Items.tsx)
