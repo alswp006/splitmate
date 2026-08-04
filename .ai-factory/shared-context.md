@@ -164,6 +164,7 @@ export interface RouteState {
     CountUp.tsx
     FloatingTabBar.tsx
     MiniBar.tsx
+    OnboardingGate.tsx
     PageShell.tsx
     ScreenScaffold.tsx
     ShareCard.tsx
@@ -187,6 +188,8 @@ export interface RouteState {
     Home.tsx
     Items.tsx
     NewSettlement.tsx
+    Result.tsx
+    Split.tsx
     __TdsGallery.tsx
   styles/
     globals.css
@@ -211,6 +214,7 @@ export interface RouteState {
 - CountUp.tsx: CountUp
 - FloatingTabBar.tsx: FloatingTabBar
 - MiniBar.tsx: MiniBar
+- OnboardingGate.tsx: OnboardingGate
 - PageShell.tsx: PageShell
 - ScreenScaffold.tsx: ScreenScaffold
 - ShareCard.tsx: ShareCard
@@ -225,6 +229,8 @@ export interface RouteState {
   pages/Home.tsx → imports: components/ScreenScaffold, components/StateView, lib/format, lib/storage, lib/types
   pages/Items.tsx → imports: components/ScreenScaffold, components/BottomCTA, components/SummaryHero, components/Amount, lib/format, lib/types
   pages/NewSettlement.tsx → imports: components/ScreenScaffold, components/BottomCTA, lib/types
+  pages/Result.tsx → imports: components/ScreenScaffold, components/SummaryHero, components/Card, components/Amount, components/StateView, components/AdSlot, components/TossRewardAd, lib/storage, lib/calc, lib/transfer, lib/format, lib/types
+  pages/Split.tsx → imports: components/ScreenScaffold, components/BottomCTA, lib/calc, lib/storage, lib/format, lib/types
 CRITICAL: Before creating any new function, type, or component, check the list above. If something similar exists, import and use it.
 
 ## Already Implemented (do NOT duplicate or overwrite)

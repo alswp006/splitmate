@@ -1,29 +1,26 @@
-# Sprint Contract — Packet 0005: Haptic & Share Helper Components
+# Sprint Contract — 라우팅 배선 · 온보딩 게이트 · 검수 컴플라이언스
 
 ## 패킷 목표
-도메인 헬퍼 파일(useHaptic) + 공유 기능 표시 컴포넌트(ShareCard)를 제공하여 F6-F7 결과 화면의 UX 폴리시를 additive하게 지원한다. App.tsx/main.tsx 진입점 수정 금지.
+react-router-dom으로 5개 화면(/, /new, /new/items, /new/split, /result) 배선하고, App 레벨에서 getFlags() 기반 OnboardingGate를 실행하여 첫 실행 시 안내 다이얼로그 1회 표시 후 setOnboarded 저장.
 
-## 생성할 파일
+## 생성/수정 파일
 
 | 파일 | 책임 | 상세 |
 |------|------|------|
-| `src/hooks/useHaptic.ts` | 햅틱 래퍼 | generateHapticFeedback 예외 가드 + try/catch 래핑 |
-| `src/components/ShareCard.tsx` | 공유 카드 UI | 참여자별 share 렌더 + 송금/공유 액션 버튼(TDS) |
+| `src/App.tsx` | 라우팅 진입점 + 게이트 | Routes 5개 + FloatingTabBar (home only) + OnboardingGate 래퍼 |
+| `src/components/OnboardingGate.tsx` | 온보딩 게이트 | getFlags().onboarded 체크, false면 AlertDialog 1회, setOnboarded(true) |
 
 ## 사용할 타입 (types.ts import 필수)
-- `ParticipantShare` — participantId, name, amount
-- `SettlementResult` — total, shares[]
-- `RouteState` — 타입 안전 라우팅
+- `Settlement` — /new, /new/items, /new/split, /result의 route state contract
 
 ## 검증 방법
 1. `pnpm typecheck` — 타입 에러 0
-2. `pnpm test` — F6/F7 테스트 통과
+2. `pnpm test` — 모든 packet-*.test.ts 통과
 3. `npx next build` — 빌드 성공
-4. 임포트 검증 — types.ts 타입 참조 확인
+4. Manual: /result 직접 접근 → 안됨 or home으로 redirect
+5. Manual: 첫 실행 (onboarded=false) → AlertDialog 1회 표시 후 setOnboarded(true)
 
 ## 절대 금지 사항
-- ❌ App.tsx, main.tsx, _app.tsx 수정
-- ❌ localStorage 로직 추가 (F2 소유)
-- ❌ 계산 로직 추가 (F5 소유)
-- ❌ SDK 예외 처리 없이 직접 호출
-- ❌ 임포트 없이 types 재정의
+- ❌ main.tsx 수정 (@AI:ANCHOR)
+- ❌ react-router-dom 외 라우팅 라이브러리
+- ❌ OnboardingGate 없이 직접 라우팅

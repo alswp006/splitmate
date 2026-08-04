@@ -29,6 +29,7 @@ export default function Items() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = (location.state as RouteState["/new/items"] | null) ?? null;
+  console.log("ITEMS-INTERNAL:", JSON.stringify(location.state), "path=", location.pathname);
 
   const [items, setItems] = useState<SettlementItem[]>([]);
   const [label, setLabel] = useState("");

@@ -5,7 +5,18 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      // react-router@7 exposes both CJS (via the `node` export condition →
+      // dist/index.js) and ESM (dist/index.mjs). In vitest the test file and the
+      // app/page modules end up resolving through different conditions, producing
+      // TWO copies of react-router's module-level `LocationContext`. A page's
+      // `useLocation()` then reads the copy that has no provider and gets a default
+      // `{ pathname: '/', state: null }`, so routing/state silently collapse to "/".
+      // Pinning both packages to their ESM builds forces one shared instance
+      // (real Vite dev/build already dedupe correctly — this only affects tests).
+      'react-router-dom': path.resolve(__dirname, './node_modules/react-router-dom/dist/index.mjs'),
+      'react-router': path.resolve(__dirname, './node_modules/react-router/dist/development/index.mjs'),
     },
+    dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom'],
   },
   test: {
     globals: true,
