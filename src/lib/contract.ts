@@ -5,41 +5,28 @@
  * 타입을 그대로 가정해도 된다. 추측이 어긋나 병합에서 무너지는 것을 막기 위한 파일이다.
  */
 
-/** 정산 참여자 (구현: 패킷 0001) */
-export type Person = { id: string; name: string };
+export type Participant = { id: string; name: string };
 
-/** 지출 항목 (누가 냈고, 누가 쓸 것인가) (구현: 패킷 0001) */
-export type Item = { id: string; description?: string; amount: number; paidBy: string; splitAmong: string[] };
+export type Item = { id: string; name: string; amountKrw: number; paidBy: string; splitWith: string[] };
 
-/** 한 번의 정산 이벤트 (구현: 패킷 0001) */
-export type Settlement = { id: string; title: string; date: string; items: Item[]; participants: Person[] };
+export type TransferResult = { from: string; to: string; amountKrw: number };
 
-/** 정산 결과 (누가 누구에게 얼마를 돌려주는가) (구현: 패킷 0001) */
-export type SettlementResult = { from: string; to: string; amount: number };
+export type SplitResult = { id: string; createdAt: string; title: string; participants: Participant[]; transfers: TransferResult[] };
 
-/** 라우팅 상태 + 임시 입력 데이터 (구현: 패킷 0001) */
-export type RouteState = { screen: 'home' | 'new' | 'items' | 'split' | 'result'; settlementId?: string; tempSettlement?: Partial<Settlement> };
+export type RouteState = { title?: string; participants?: Participant[]; items?: Item[] };
 
-/** 정산 내역 저장 (구현: 패킷 0002) */
-export type saveSettlementFn = (settlement: Settlement) => void;
+export type saveSplitResultFn = (result: SplitResult) => Promise<void>;
 
-/** ID로 정산 내역 조회 (구현: 패킷 0002) */
-export type getSettlementFn = (id: string) => Settlement | null;
+export type getSplitResultsFn = () => Promise<SplitResult[]>;
 
-/** 저장된 모든 정산 내역 조회 (구현: 패킷 0002) */
-export type listSettlementsFn = () => Settlement[];
+export type deleteSplitResultFn = (id: string) => Promise<void>;
 
-/** 지출 항목과 참여자 목록으로 정산 결과 계산 (순수함수) (구현: 패킷 0003) */
-export type calculateSettlementFn = (items: Item[], participants: Person[]) => SettlementResult[];
+export type calculateTransfersFn = (items: Item[], participants: Participant[]) => TransferResult[];
 
-/** 원화 금액 표시 (예: 1,000,000₩) (구현: 패킷 0004) */
-export type formatKRWFn = (amount: number) => string;
+export type formatKrwFn = (amount: number) => string;
 
-/** 송금 딥링크 (토스/카카오페이) 생성 (구현: 패킷 0004) */
-export type generateTransferLinkFn = (fromPersonId: string, toPersonId: string, amount: number) => string;
+export type formatDateFn = (date: string) => string;
 
-/** 햅틱 피드백 훅 (구현: 패킷 0011) */
-export type useHapticFn = () => { trigger: () => void };
+export type generateTossTransferUrlFn = (from: string; to: string; amountKrw: number) => string;
 
-/** 공유 카드 컴포넌트 props (구현: 패킷 0011) */
-export type ShareCardProps = { settlement: Settlement; results: SettlementResult[]; onShare?: () => void };
+export type useHapticFn = () => () => void;
