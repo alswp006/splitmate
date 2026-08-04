@@ -19,7 +19,31 @@ const ROUTES: { path: string; name: string }[] = [
 /** 데이터가 필요한 화면용 localStorage 시드(앱에 맞게 채워라). 앱 스크립트보다 먼저 실행된다. */
 async function seed(page: Page): Promise<void> {
   await page.addInitScript(() => {
-    // window.localStorage.setItem("MY_STORAGE_KEY", JSON.stringify({ /* ... */ }));
+    window.localStorage.setItem(
+      "splitmate:recent",
+      JSON.stringify([
+        {
+          id: "s1",
+          title: "제주도 여행",
+          participants: [
+            { id: "p1", name: "민제" },
+            { id: "p2", name: "지은" },
+            { id: "p3", name: "현우" },
+          ],
+          items: [
+            { id: "i1", label: "숙소", amount: 200000, participantIds: ["p1", "p2", "p3"] },
+            { id: "i2", label: "저녁", amount: 90000, participantIds: ["p1", "p2", "p3"] },
+          ],
+          splitRules: [
+            { participantId: "p1", mode: "even", value: 0 },
+            { participantId: "p2", mode: "even", value: 0 },
+            { participantId: "p3", mode: "even", value: 0 },
+          ],
+          createdAt: 1000,
+          updatedAt: 5000,
+        },
+      ]),
+    );
   });
 }
 
