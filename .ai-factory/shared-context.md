@@ -235,3 +235,4 @@ CRITICAL: Before creating any new function, type, or component, check the list a
 - 0011: 햅틱·공유 헬퍼 컴포넌트 + 최종 UX 폴리시 (files: src/hooks/useHaptic.ts, src/components/ShareCard.tsx)
 - 0006: 기본 정보 입력 `/new` (제목·참여자) (files: src/pages/NewSettlement.tsx)
 - 0007: 항목 입력 `/new/items` (금액·인원 지정) (files: src/pages/Items.tsx)
+- 0008: 분할 설정 `/new/split` (계산 실행 + 저장) (files: src/pages/Split.tsx)
