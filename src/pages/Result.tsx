@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Top, Paragraph, Spacing, Button, Toast } from "@toss/tds-mobile";
+import { Top, Paragraph, Spacing, Button, Toast, BottomSheet } from "@toss/tds-mobile";
 import { ScreenScaffold } from "@/components/ScreenScaffold";
 import { SummaryHero } from "@/components/SummaryHero";
 import { Card } from "@/components/Card";
 import { Amount } from "@/components/Amount";
+import { CountUp } from "@/components/CountUp";
 import { EmptyState } from "@/components/StateView";
 import { AdSlot } from "@/components/AdSlot";
 import { TossRewardAd } from "@/components/TossRewardAd";
 import { getSettlementById } from "@/lib/storage";
 import { calculateSplit } from "@/lib/calc";
 import { requestTransfer } from "@/lib/transfer";
-import { formatKRW } from "@/lib/format";
+import { downloadResultImage } from "@/lib/shareImage";
 import type { RouteState } from "@/lib/types";
 
 export default function Result() {
@@ -20,6 +21,7 @@ export default function Result() {
   const state = (location.state as RouteState["/result"] | null) ?? null;
   const [showShare, setShowShare] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
+  const [toastText, setToastText] = useState("송금 화면을 열 수 없어요");
 
   const settlement = state?.settlementId ? getSettlementById(state.settlementId) : null;
 
@@ -56,7 +58,34 @@ export default function Result() {
 
   const handleTransfer = async (name: string, amount: number) => {
     const ok = await requestTransfer(amount, name);
-    if (!ok) setToastOpen(true);
+    if (!ok) {
+      setToastText("송금 화면을 열 수 없어요");
+      setToastOpen(true);
+    }
+  };
+
+  const shareRows = settlement.participants.map((p) => ({
+    name: p.name,
+    amount: shares.find((s) => s.participantId === p.id)?.amount ?? 0,
+  }));
+
+  const handleSaveImage = () => {
+    const ok = downloadResultImage(settlement.title, shareRows);
+    setToastText(ok ? "이미지가 저장되었어요" : "이미지를 저장하지 못했어요");
+    setToastOpen(true);
+    setShowShare(false);
+  };
+
+  const handleCopyText = () => {
+    try {
+      const summary = shareRows.map((row) => `${row.name} ${row.amount.toLocaleString("ko-KR")}원`).join("\n");
+      navigator.clipboard?.writeText(`${settlement.title} 정산 결과\n${summary}`);
+      setToastText("복사되었어요");
+    } catch {
+      setToastText("복사하지 못했어요");
+    }
+    setToastOpen(true);
+    setShowShare(false);
   };
 
   return (
@@ -64,7 +93,7 @@ export default function Result() {
       <SummaryHero
         testId="total-hero"
         label="총 정산액"
-        value={<Amount value={total} unit="원" typography="t1" />}
+        value={<CountUp value={total} unit="원" typography="t1" />}
       />
       <Spacing size={20} />
       {settlement.participants.map((p) => {
@@ -74,11 +103,12 @@ export default function Result() {
             <Card testId="share-card">
               <Paragraph.Text typography="t5">{p.name}</Paragraph.Text>
               <Spacing size={4} />
-              <Paragraph.Text typography="t3">{formatKRW(amount)}원</Paragraph.Text>
+              <Amount value={amount} unit="원" typography="t2" />
               <Spacing size={12} />
               <Button
                 variant="weak"
                 display="block"
+                disabled={amount === 0}
                 data-testid={`transfer-button-${p.name}`}
                 onClick={() => handleTransfer(p.name, amount)}
               >
@@ -93,26 +123,26 @@ export default function Result() {
       <Spacing size={20} />
       {showShare ? (
         <TossRewardAd slotId={import.meta.env.VITE_TOSS_AD_SLOT_ID}>
-          <Button
-            variant="weak"
-            display="block"
-            onClick={() => {
-              try {
-                navigator.clipboard?.writeText(`${settlement.title} 정산 결과`);
-              } catch {
-                /* 클립보드 미지원 — 무시 */
-              }
-            }}
+          <BottomSheet
+            open
+            onDimmerClick={() => setShowShare(false)}
+            header={<BottomSheet.Header>공유 방법 선택</BottomSheet.Header>}
           >
-            텍스트 복사
-          </Button>
+            <Button variant="weak" display="block" onClick={handleSaveImage}>
+              이미지 저장
+            </Button>
+            <Spacing size={8} />
+            <Button variant="weak" display="block" onClick={handleCopyText}>
+              텍스트 복사
+            </Button>
+          </BottomSheet>
         </TossRewardAd>
       ) : (
         <Button variant="fill" display="block" onClick={() => setShowShare(true)}>
           정산 내역 공유
         </Button>
       )}
-      <Toast open={toastOpen} text="송금 화면을 열 수 없어요" position="bottom" />
+      <Toast open={toastOpen} text={toastText} position="bottom" onClose={() => setToastOpen(false)} />
     </ScreenScaffold>
   );
 }

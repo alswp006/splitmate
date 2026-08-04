@@ -50,6 +50,10 @@ async function seed(page: Page): Promise<void> {
 // 토스 WebView 밖(일반 브라우저)에서만 나는 알려진 dev 에러 — 무시(실기기 WebView엔 안 남)
 const IGNORED_CONSOLE = [/SafeAreaInsets/i, /getSafeAreaInsets/i];
 
+// Asset.Icon/ContentIcon은 static.toss.im에서 SVG를 fetch한다 — 테스트 샌드박스는 외부 네트워크를
+// 차단(ORB/403)하므로, 실기기에서는 없을 네트워크 에러로 테스트가 깨지는 것을 막기 위해 스텁한다.
+const STUB_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"></svg>';
+
 for (const route of ROUTES) {
   test(`visual smoke: ${route.name} (${route.path})`, async ({ page }) => {
     const errors: string[] = [];
@@ -57,6 +61,10 @@ for (const route of ROUTES) {
       if (m.type() === "error" && !IGNORED_CONSOLE.some((re) => re.test(m.text()))) errors.push(m.text());
     });
     page.on("pageerror", (e) => errors.push(e.message));
+
+    await page.route("https://static.toss.im/**", (route2) =>
+      route2.fulfill({ status: 200, contentType: "image/svg+xml", body: STUB_SVG }),
+    );
 
     await seed(page);
     await page.goto(route.path);

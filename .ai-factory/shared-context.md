@@ -13,44 +13,31 @@
  * 타입을 그대로 가정해도 된다. 추측이 어긋나 병합에서 무너지는 것을 막기 위한 파일이다.
  */
 
-/** 정산 참여자 (구현: 패킷 0001) */
-export type Person = { id: string; name: string };
+export type Participant = { id: string; name: string };
 
-/** 지출 항목 (누가 냈고, 누가 쓸 것인가) (구현: 패킷 0001) */
-export type Item = { id: string; description?: string; amount: number; paidBy: string; splitAmong: string[] };
+export type Item = { id: string; name: string; amountKrw: number; paidBy: string; splitWith: string[] };
 
-/** 한 번의 정산 이벤트 (구현: 패킷 0001) */
-export type Settlement = { id: string; title: string; date: string; items: Item[]; participants: Person[] };
+export type TransferResult = { from: string; to: string; amountKrw: number };
 
-/** 정산 결과 (누가 누구에게 얼마를 돌려주는가) (구현: 패킷 0001) */
-export type SettlementResult = { from: string; to: string; amount: number };
+export type SplitResult = { id: string; createdAt: string; title: string; participants: Participant[]; transfers: TransferResult[] };
 
-/** 라우팅 상태 + 임시 입력 데이터 (구현: 패킷 0001) */
-export type RouteState = { screen: 'home' | 'new' | 'items' | 'split' | 'result'; settlementId?: string; tempSettlement?: Partial<Settlement> };
+export type RouteState = { title?: string; participants?: Participant[]; items?: Item[] };
 
-/** 정산 내역 저장 (구현: 패킷 0002) */
-export type saveSettlementFn = (settlement: Settlement) => void;
+export type saveSplitResultFn = (result: SplitResult) => Promise<void>;
 
-/** ID로 정산 내역 조회 (구현: 패킷 0002) */
-export type getSettlementFn = (id: string) => Settlement | null;
+export type getSplitResultsFn = () => Promise<SplitResult[]>;
 
-/** 저장된 모든 정산 내역 조회 (구현: 패킷 0002) */
-export type listSettlementsFn = () => Settlement[];
+export type deleteSplitResultFn = (id: string) => Promise<void>;
 
-/** 지출 항목과 참여자 목록으로 정산 결과 계산 (순수함수) (구현: 패킷 0003) */
-export type calculateSettlementFn = (items: Item[], participants: Person[]) => SettlementResult[];
+export type calculateTransfersFn = (items: Item[], participants: Participant[]) => TransferResult[];
 
-/** 원화 금액 표시 (예: 1,000,000₩) (구현: 패킷 0004) */
-export type formatKRWFn = (amount: number) => string;
+export type formatKrwFn = (amount: number) => string;
 
-/** 송금 딥링크 (토스/카카오페이) 생성 (구현: 패킷 0004) */
-export type generateTransferLinkFn = (fromPersonId: string, toPersonId: string, amount: number) => string;
+export type formatDateFn = (date: string) => string;
 
-/** 햅틱 피드백 훅 (구현: 패킷 0011) */
-export type useHapticFn = () => { trigger: () => void };
+export type generateTossTransferUrlFn = (from: string; to: string; amountKrw: number) => string;
 
-/** 공유 카드 컴포넌트 props (구현: 패킷 0011) */
-export type ShareCardProps = { settlement: Settlement; results: SettlementResult[]; onShare?: () => void };
+export type useHapticFn = () => () => void;
 
 ```
 
@@ -179,6 +166,7 @@ export interface RouteState {
     calc.ts
     contract.ts
     format.ts
+    shareImage.ts
     storage.ts
     transfer.ts
     types.ts
@@ -191,16 +179,19 @@ export interface RouteState {
     Result.tsx
     Split.tsx
     __TdsGallery.tsx
+    zzz-probe.ts
   styles/
     globals.css
     reward-ad.css
   types/
   vite-env.d.ts
+  zzz-probe-mod.ts
 
 ### Exports (src/lib/)
 - calc.ts: export type SplitMode = "even" | "ratio" | "fixed" | "excluded"; export interface SplitParticipant; export interface Share; export interface SettlementResult; export type CalculateSplitResult = |; export interface CalculateSplitInput; export function calculateSplit( input: CalculateSplitInput ): CalculateSplitResult
 - contract.ts: export type Person =; export type Item =; export type Settlement =; export type SettlementResult =; export type RouteState =; export type saveSettlementFn = (settlement: Settlement) => void; export type getSettlementFn = (id: string) => Settlement | null; export type listSettlementsFn = () => Settlement[]
 - format.ts: export function formatKRW(amount: number): string; export function parseKRW(formatted: string): number
+- shareImage.ts: export function downloadResultImage(title: string, rows: ShareRow[]): boolean
 - storage.ts: export function getItem<T>(key: string): T | null; export function setItem<T>(key: string, value: T): void; export function removeItem(key: string): void; export function saveSettlement(settlement: Settlement): SaveResult; export function getRecentSettlements(): Settlement[]; export function getSettlementById(id: string): Settlement | null; export function deleteSettlement(id: string):; export function getFlags(): Flags
 - transfer.ts: export async function requestTransfer( amount: number, recipientName?: string ): Promise<boolean>
 - types.ts: export type SplitMode = 'even' | 'ratio' | 'fixed' | 'excluded'; export interface Participant; export interface SettlementItem; export interface SplitRule; export interface Settlement; export interface ParticipantShare; export interface SettlementResult; export type SaveResult = |
@@ -229,8 +220,9 @@ export interface RouteState {
   pages/Home.tsx → imports: components/ScreenScaffold, components/StateView, lib/format, lib/storage, lib/types
   pages/Items.tsx → imports: components/ScreenScaffold, components/BottomCTA, components/SummaryHero, components/Amount, lib/format, lib/types
   pages/NewSettlement.tsx → imports: components/ScreenScaffold, components/BottomCTA, lib/types
-  pages/Result.tsx → imports: components/ScreenScaffold, components/SummaryHero, components/Card, components/Amount, components/StateView, components/AdSlot, components/TossRewardAd, lib/storage, lib/calc, lib/transfer, lib/format, lib/types
+  pages/Result.tsx → imports: components/ScreenScaffold, components/SummaryHero, components/Card, components/Amount, components/CountUp, components/StateView, components/AdSlot, components/TossRewardAd, lib/storage, lib/calc, lib/transfer, lib/shareImage, lib/types
   pages/Split.tsx → imports: components/ScreenScaffold, components/BottomCTA, lib/calc, lib/storage, lib/format, lib/types
+  pages/zzz-probe.ts → imports: lib/format
 CRITICAL: Before creating any new function, type, or component, check the list above. If something similar exists, import and use it.
 
 ## Already Implemented (do NOT duplicate or overwrite)
@@ -238,7 +230,7 @@ CRITICAL: Before creating any new function, type, or component, check the list a
 - 0002: localStorage 저장 계층 (CRUD) (files: src/lib/storage.ts)
 - 0003: 분할 계산 순수 함수 (files: src/lib/calc.ts)
 - 0004: 통화 포맷 & 토스 송금 딥링크 유틸 (files: src/lib/format.ts, src/lib/transfer.ts)
-- 0011: 햅틱·공유 헬퍼 컴포넌트 + 최종 UX 폴리시 (files: src/hooks/useHaptic.ts, src/components/ShareCard.tsx)
 - 0006: 기본 정보 입력 `/new` (제목·참여자) (files: src/pages/NewSettlement.tsx)
 - 0007: 항목 입력 `/new/items` (금액·인원 지정) (files: src/pages/Items.tsx)
 - 0008: 분할 설정 `/new/split` (계산 실행 + 저장) (files: src/pages/Split.tsx)
+- 0011: 햅틱·공유 헬퍼 컴포넌트 + 최종 UX 폴리시 (files: src/hooks/useHaptic.ts, src/components/ShareCard.tsx)

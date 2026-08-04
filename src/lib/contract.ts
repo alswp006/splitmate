@@ -27,6 +27,6 @@ export type formatKrwFn = (amount: number) => string;
 
 export type formatDateFn = (date: string) => string;
 
-export type generateTossTransferUrlFn = (from: string; to: string; amountKrw: number) => string;
+export type generateTossTransferUrlFn = (from: string, to: string, amountKrw: number) => string;
 
 export type useHapticFn = () => () => void;
